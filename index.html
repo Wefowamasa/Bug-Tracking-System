@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZONE 127.0.0.1 — Bug Tracking</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+<div class="scanlines"></div>
+
+<header>
+  <div class="header-logo">
+    <span class="logo-zone">ZONE</span>
+    <span class="logo-ip">127.0.0.1</span>
+  </div>
+  <nav>
+    <button onclick="showSection('dashboard'); loadIssues();">⚡ Issues</button>
+    <button onclick="showSection('issueFormSection'); prepareNewIssue();">＋ New Issue</button>
+    <button onclick="showSection('peopleSection'); loadPeople();">◈ People</button>
+    <button onclick="showSection('projectsSection'); loadProjects();">▣ Projects</button>
+    <button onclick="showSection('stats'); updateStats();">◎ Graphs</button>
+    <button class="btn-logout" onclick="logout()">⏻ Logout</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard">
+    <div class="section-header">
+      <div><h2>ALL ISSUES</h2><p class="section-sub">// ACTIVE ISSUE TRACKER</p></div>
+    </div>
+    <div class="filters">
+      <input id="issueSearch" class="search-input" placeholder="// SEARCH ISSUES..." oninput="loadIssues()">
+      <select id="statusFilter" class="filter-select">
+        <option value="">ALL STATUS</option>
+        <option value="open">Open</option>
+        <option value="resolved">Resolved</option>
+        <option value="overdue">Overdue</option>
+      </select>
+      <select id="projectFilter" class="filter-select">
+        <option value="">ALL PROJECTS</option>
+      </select>
+    </div>
+    <div class="panel table-panel">
+      <table>
+        <thead><tr>
+          <th>Summary</th><th>Status</th><th>Priority</th><th>Project</th>
+          <th>Assigned To</th><th>Date Identified</th><th>Target Date</th><th>Actual Date</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="issueTable"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ISSUE FORM -->
+  <section id="issueFormSection" class="hidden">
+    <div class="section-header">
+      <div><h2 id="issueFormTitle">CREATE ISSUE</h2><p class="section-sub">// LOG NEW SYSTEM EVENT</p></div>
+      <button class="btn btn-ghost" onclick="showSection('dashboard'); loadIssues();">← BACK</button>
+    </div>
+    <div class="form-panel">
+      <form id="issueForm">
+        <input type="hidden" id="issueId">
+        <div class="form-group">
+          <label class="form-label" for="summary">Summary *</label>
+          <input id="summary" class="form-control" placeholder="Issue summary..." required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="description">Description *</label>
+          <textarea id="description" class="form-control" placeholder="Detailed description..." required></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="identifiedBy">Identified By *</label>
+            <select id="identifiedBy" class="form-control" required><option value="">-- Select Person --</option></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dateIdentified">Date Identified *</label>
+            <input type="date" id="dateIdentified" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="projectSelect">Project *</label>
+            <select id="projectSelect" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="personSelect">Assigned To</label>
+            <select id="personSelect" class="form-control"><option value="">Unassigned</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" class="form-control">
+              <option value="open">Open</option>
+              <option value="resolved">Resolved</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="priority">Priority</label>
+            <select id="priority" class="form-control">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="targetDate">Target Date</label>
+            <input type="date" id="targetDate" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="actualDate">Actual Date</label>
+            <input type="date" id="actualDate" class="form-control">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="resolution">Resolution</label>
+          <textarea id="resolution" class="form-control" placeholder="Resolution notes..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">SAVE ISSUE</button>
+          <button type="button" class="btn btn-ghost" onclick="showSection('dashboard'); loadIssues();">CANCEL</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- VIEW ISSUE -->
+  <section id="viewIssue" class="hidden">
+    <div class="section-header">
+      <div><h2>VIEW ISSUE</h2><p class="section-sub">// ISSUE DETAILS</p></div>
+      <button class="btn btn-ghost" onclick="showSection('dashboard');">← BACK</button>
+    </div>
+    <div class="view-card">
+      <div class="view-row"><span class="view-label">Summary</span><span id="vSummary" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Description</span><span id="vDescription" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Status</span><span id="vStatus" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Priority</span><span id="vPriority" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Project</span><span id="vProject" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Assigned To</span><span id="vAssigned" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Identified By</span><span id="vIdentifiedBy" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Date Identified</span><span id="vDateIdentified" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Target Date</span><span id="vTargetDate" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Actual Date</span><span id="vActualDate" class="view-value"></span></div>
+      <div class="view-row"><span class="view-label">Resolution</span><span id="vResolution" class="view-value"></span></div>
+    </div>
+  </section>
+
+  <!-- PEOPLE -->
+  <section id="peopleSection" class="hidden">
+    <div class="section-header">
+      <div><h2>PEOPLE</h2><p class="section-sub">// OPERATOR DIRECTORY</p></div>
+    </div>
+    <div class="form-panel" style="margin-bottom:24px;">
+      <div class="panel-title-bar">＋ ADD PERSON</div>
+      <div class="panel-body">
+        <form id="personForm" class="inline-add-form">
+          <input id="personName" class="form-control" placeholder="First name" required>
+          <input id="personSurname" class="form-control" placeholder="Surname" required>
+          <input id="personEmail" class="form-control" placeholder="Email" required>
+          <input id="personUsername" class="form-control" placeholder="Username" required>
+          <button type="button" class="btn btn-primary" onclick="addPerson()">ADD</button>
+        </form>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title-bar">◈ OPERATORS</div>
+      <div class="panel-body">
+        <input id="peopleSearch" class="search-input" placeholder="// SEARCH PEOPLE..." oninput="loadPeople()" style="margin-bottom:16px;">
+        <ul id="peopleList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projectsSection" class="hidden">
+    <div class="section-header">
+      <div><h2>PROJECTS</h2><p class="section-sub">// ACTIVE OPERATIONS</p></div>
+    </div>
+    <div class="form-panel" style="margin-bottom:24px;">
+      <div class="panel-title-bar">＋ ADD PROJECT</div>
+      <div class="panel-body">
+        <form id="projectForm" class="inline-add-form">
+          <input id="projectName" class="form-control" placeholder="Project name" required>
+          <button type="button" class="btn btn-primary" onclick="addProject()">ADD</button>
+        </form>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title-bar">▣ PROJECT LIST</div>
+      <div class="panel-body">
+        <input id="projectSearch" class="search-input" placeholder="// SEARCH PROJECTS..." oninput="loadProjects()" style="margin-bottom:16px;">
+        <ul id="projectList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS / GRAPHS -->
+  <section id="stats" class="hidden">
+    <div class="section-header">
+      <div><h2>ANALYTICS</h2><p class="section-sub">// SYSTEM METRICS &amp; VISUALIZATION</p></div>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card" style="--accent:#00f5ff;">
+        <div class="stat-label">OPEN</div>
+        <div class="stat-value" id="openCount" style="color:#00f5ff;text-shadow:0 0 18px #00f5ff;">0</div>
+        <div class="stat-sub">Awaiting action</div>
+      </div>
+      <div class="stat-card" style="--accent:#ffcc00;">
+        <div class="stat-label">OVERDUE</div>
+        <div class="stat-value" id="progressCount" style="color:#ffcc00;text-shadow:0 0 18px #ffcc00;">0</div>
+        <div class="stat-sub">Past target date</div>
+      </div>
+      <div class="stat-card" style="--accent:#00ff88;">
+        <div class="stat-label">RESOLVED</div>
+        <div class="stat-value" id="closedCount" style="color:#00ff88;text-shadow:0 0 18px #00ff88;">0</div>
+        <div class="stat-sub">Successfully closed</div>
+      </div>
+      <div class="stat-card" style="--accent:#ff8800;">
+        <div class="stat-label">UNASSIGNED</div>
+        <div class="stat-value" id="unassignedCount" style="color:#ff8800;text-shadow:0 0 18px #ff8800;">0</div>
+        <div class="stat-sub">No operator assigned</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-wrap">
+        <div class="chart-title">◉ ISSUES BY STATUS</div>
+        <div class="chart-container"><canvas id="chart-status"></canvas></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">◉ ISSUES BY PRIORITY</div>
+        <div class="chart-container"><canvas id="chart-priority"></canvas></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">◉ ISSUES BY PROJECT</div>
+        <div class="chart-container"><canvas id="chart-project"></canvas></div>
+      </div>
+      <div class="chart-wrap">
+        <div class="chart-title">◉ ASSIGNED vs UNASSIGNED</div>
+        <div class="chart-container"><canvas id="chart-assigned"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-wrap chart-full" style="margin-bottom:24px;">
+      <div class="chart-title">◉ DAILY ISSUE CREATION — LAST 14 DAYS</div>
+      <div class="chart-container" style="height:280px;"><canvas id="chart-daily"></canvas></div>
+    </div>
+
+    <div class="panel" style="margin-bottom:24px;">
+      <div class="panel-title-bar">◈ OPERATOR ISSUE STATS</div>
+      <div id="person-stats-list" style="padding:20px;"></div>
+    </div>
+
+
+    <div style="display:none;">
+      <div id="openBar"></div>
+      <div id="progressBar"></div>
+      <div id="closedBar"></div>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>

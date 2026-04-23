@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZONE 127.0.0.1 — Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="register.css">
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+<div class="scanlines"></div>
+
+<div class="register-wrap">
+  <div class="register-box">
+    <div class="reg-logo">
+      <span class="logo-zone">ZONE</span>
+      <span class="logo-ip">127.0.0.1</span>
+    </div>
+    <div class="reg-subtitle">// CREATE OPERATOR ACCOUNT</div>
+
+    <form id="registerForm">
+      <div class="form-row">
+        <div class="input-group">
+          <label class="input-label">First Name</label>
+          <input type="text" id="firstname" class="input-ctrl" placeholder="First name" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label">Last Name</label>
+          <input type="text" id="lastname" class="input-ctrl" placeholder="Last name" required>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Username</label>
+        <input type="text" id="regUsername" class="input-ctrl" placeholder="operator_id" required>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Email</label>
+        <input type="email" id="email" class="input-ctrl" placeholder="user@zone.local" required>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <input type="password" id="password" class="input-ctrl" placeholder="••••••••" required>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" class="input-ctrl" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="reg-btn">REGISTER OPERATOR</button>
+    </form>
+
+    <div class="reg-footer">
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
+  </div>
+</div>
+
+<script src="register.js"></script>
+</body>
+</html>

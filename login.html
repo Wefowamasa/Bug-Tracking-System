@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZONE 127.0.0.1 — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login_styles.css">
+</head>
+<body>
+
+<canvas id="circuit-canvas"></canvas>
+<div class="scanlines"></div>
+
+<div class="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="logo-zone">ZONE</span>
+      <span class="logo-ip">127.0.0.1</span>
+    </div>
+    <div class="login-subtitle">// AUTHENTICATE TO ENTER</div>
+
+    <form id="loginForm">
+      <div class="input-group">
+        <label class="input-label">Username</label>
+        <input type="text" id="loginUsername" class="input-ctrl" placeholder="operator_id" required>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Password</label>
+        <input type="password" id="loginPassword" class="input-ctrl" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="login-btn">ACCESS SYSTEM</button>
+    </form>
+
+    <div class="login-footer">
+      No account? <a href="register.html">Register here</a>
+    </div>
+  </div>
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>
